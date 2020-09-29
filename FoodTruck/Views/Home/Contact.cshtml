@@ -1,0 +1,40 @@
+﻿@using FoodTruck.Models
+
+@{
+    ViewBag.Title = "FoodTruckLyon - Contactez-nous !";
+    Client client = ViewBag.Client;
+    string valueNom = "", valuePrenom = "", valueEmail = "";
+    if (client.Id != 0)
+    {
+        valueNom = "value=" + client.Nom;
+        valuePrenom = "value=" + client.Prenom;
+        valueEmail = "value=" + client.Email;
+    }
+}
+<div class="contact">
+    <h2>Contactez-nous !</h2>
+    <dl class="dl-horizontal"></dl>
+    <h4>Vous avez des questions sur nos produits ? Vous souhaitez prendre contact avec nous ? Remplissez le formulaire ci-dessous et un membre de notre équipe vous répondra dans les plus brefs délais.</h4>
+    @using (Html.BeginForm("Contact", "Home", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        <p>Votre message</p>
+        <div class="ccfield-prepend">
+            <textarea class="ccformfield" name="comments" rows="8" placeholder="Message" maxlength='1000' required></textarea>
+        </div>
+        <p>Vous</p>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="nom" type="text" placeholder="Nom" maxlength='30' @valueNom required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="Prenom" type="text" placeholder="Prénom" maxlength='30' @valuePrenom required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="email" type="email" placeholder="Email" maxlength='80' @valueEmail required>
+        </div>
+
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Envoyer">
+        </div>
+    }
+</div>

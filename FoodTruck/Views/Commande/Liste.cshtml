@@ -1,0 +1,120 @@
+﻿@using FoodTruck.ViewModels
+@using System.Configuration
+@using System.Globalization
+@{
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+}
+@model List<CommandeViewModel>
+
+@if (Model != null)
+{
+    <h3>@TempData["MessageCommandes"]</h3>
+    <div id="panierEnLigne">
+        <div>
+            @foreach (var c in Model)
+            {
+                string classDate = "class=commandeAnnulee";
+                string preDate = "";
+                bool enCours = false;
+                bool boutonFacture = false;
+                if (@c.Commande.Annulation)
+                {
+                    preDate = "Commande annulée. Le retrait été prévu le ";
+                    classDate = "class=commandeAnnulee";
+                }
+                else if (c.Commande.Retrait)
+                {
+                    boutonFacture = true;
+                    preDate = "Retirée le ";
+                    classDate = "class=commandeRetiree";
+                }
+                else
+                {
+                    preDate = "A retirer le ";
+                    classDate = "class=commandeARetirer";
+                    enCours = true;
+                }
+                <div class="gestionCommandeArticle">
+                    <h4>Commande n° : @c.Commande.Id</h4>
+                    <div id="marquerCommande">
+                        @if (enCours && (ViewBag.ModeAdmin || c.Commande.DateRetrait > DateTime.Now))
+                        {
+                            using (Html.BeginForm("Annuler", "Commande", new { area = "", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <input name="commandeId" type="hidden" value="@c.Commande.Id">
+                                <div class="ccfield-prepend">
+                                    <button class="annulerCommande" type="submit">Annuler cette commande</button>
+                                </div>
+                            }
+                        }
+                        @if (ViewBag.ModeAdmin && !c.Commande.Retrait)
+                        {
+                            using (Html.BeginForm("Retirer", "Commande", new { area = "", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                            {
+                                <input name="commandeId" type="hidden" value="@c.Commande.Id">
+                                <div class="ccfield-prepend">
+                                    <button class="retirerCommande" type="submit">Marquer retirée</button>
+                                </div>
+                            }
+                        }
+                    </div>
+                    @if (boutonFacture)
+                    {
+                        using (Html.BeginForm("CommandeVersPdf", "Facture", new { area = "", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <input name="commandeId" type="hidden" value="@c.Commande.Id">
+                            <div class="ccfield-prepend">
+                                <button class="telechargerFacture" type="submit">Télécharger la facture</button>
+                            </div>
+                        }
+                    }
+                    @if (ViewBag.ModeAdmin)
+                    {
+                        <div>Client : @c.Client.Prenom @c.Client.Nom (@c.Client.Email)</div>
+                    }
+                    <div @classDate>@preDate @c.Commande.DateRetrait.ToString("dddd dd MMMM yyyy à HH:mm").Replace(":", "h")</div>
+                    <div class="total">Prix Total : @c.Commande.PrixTotalTTC.ToString("C2", new CultureInfo("fr-FR"))</div>
+                    @if (c.Commande.RemiseFidelite != 0)
+                    {
+                        <div class="total">Remise fidélité : @c.Commande.RemiseFidelite.ToString("C2", new CultureInfo("fr-FR"))</div>
+                    }
+                    @if (c.Commande.RemiseCommerciale != 0)
+                    {
+                        <div class="total">Remise commerciale : @c.Commande.RemiseCommerciale.ToString("C2", new CultureInfo("fr-FR"))</div>
+                    }
+                    <section class="imagesGestionCommande">
+                        @foreach (var a in c.ListArticlesVM)
+                        {
+                            string effet = "";
+                            if (!a.Article.DansCarte)
+                            {
+                                effet = "class=pasDansCarte";
+                            }
+                            <div class="indexArticle">
+                                <a @effet href="/Article/@a.NomPourUrl">
+                                    <img src="@dossierImagesArticles/@a.Article.Image" alt="@a.Article.Nom" />
+                                </a>
+                                <p>@a.Quantite x @a.Article.Nom</p>
+                            </div>
+                        }
+                    </section>
+                    @if (ViewBag.ModeClient)
+                    {
+                        using (Html.BeginForm("ReprendreArticles", "Commande", new { area = "", ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+                        {
+                            <div>
+                                <input name="viderPanier" type="checkbox" value="true">
+                                <input name="viderPanier" type="hidden" value="false">
+                                Vider panier puis
+                            </div>
+                            <input name="commandeId" type="hidden" value="@c.Commande.Id">
+                            <button class="reprendreCommande" type="submit">Reprendre cette commande</button>
+                        }
+                    }
+                    <hr />
+                </div>
+            }
+        </div>
+    </div>
+}
+

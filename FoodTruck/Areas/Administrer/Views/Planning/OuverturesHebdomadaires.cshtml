@@ -1,0 +1,62 @@
+﻿@using System.Globalization
+@using FoodTruck.Models
+@model List<OuvertureHebdomadaire>
+@{
+    ViewBag.Title = "FoodTruckLyon - Gérer les ouvertures hebdomadaires";
+}
+
+<div class="adminPlanning">
+    <h2>Gestion des ouvertures hebdomadaires</h2>
+    <h3>Saisir une ouverture hebdomadaire</h3>
+    @using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input name="id" type="hidden" value="0">
+        <div class="gestionFermetureOuverture">
+            <div class="ccfield-prepend">
+                <select class="ccformfield" name="jourId" required>
+                    <option selected disabled>Jour</option>
+                    @foreach (DayOfWeek jour in Enum.GetValues(typeof(DayOfWeek)))
+                    {
+                        int ceJourId = (int)jour;
+                        <option value="@ceJourId">@DateTimeFormatInfo.CurrentInfo.GetDayName(jour)</option>
+                    }
+                </select>
+            </div>
+            <div><input class="ccformfield" id="heureDebut" title="heure de début" name="heureDebut" type="time" value="00:00" onblur="MiseAJourHeureFin(this.value, heureFin.id, 0, 0)" required></div>
+            <div><input class="ccformfield" id="heureFin" title="heure de fin" name="heureFin" type="time" value="23:59" onblur="MiseAJourHeureDebut(this.value, heureDebut.id, 0, 0)" required></div>
+            <div><input class="boutonAjouter" type="submit" name="action" value="Ajouter"></div>
+        </div>
+    }
+
+    <h3>Liste des ouvertures hebdomadaires</h3>
+    @foreach (OuvertureHebdomadaire plage in Model)
+    {
+        using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            string heureDebutId = "h" + plage.Id + plage.Debut.ToString("hhmm");
+            string heureFinId = "h" + plage.Id + plage.Fin.ToString("hhmm");
+            string id = ".id";
+            <input name="id" type="hidden" value="@plage.Id">
+            <div class="gestionFermetureOuverture">
+                <div class="ccfield-prepend">
+                    <select class="ccformfield" name="jourId" required>
+                        @foreach (DayOfWeek jour in Enum.GetValues(typeof(DayOfWeek)))
+                        {
+                            int ceJourId = (int)jour;
+                            string selected = "";
+                            if (ceJourId == plage.JourSemaineId)
+                            {
+                                selected = "selected";
+                            }
+                            <option value="@ceJourId" @selected>@DateTimeFormatInfo.CurrentInfo.GetDayName(jour)</option>
+                        }
+                    </select>
+                </div>
+                <div><input class="ccformfield" id="@heureDebutId" title="heure de début" name="heureDebut" type="time" value="@plage.Debut.ToString("hh\\:mm")" onblur="MiseAJourHeureFin(this.value, @heureFinId@id, 0, 0" required></div>
+                <div><input class="ccformfield" id="@heureFinId" title="heure de fin" name="heureFin" type="time" value="@plage.Fin.ToString("hh\\:mm")" onblur="MiseAJourHeureDebut(this.value, @heureDebutId@id, 0, 0" required></div>
+                <div><input class="boutonModifier" type="submit" name="action" value="Modifier"></div>
+                <div><input class="boutonSupprimer" type="submit" name="action" value="Supprimer"></div>
+            </div>
+        }
+    }
+</div>

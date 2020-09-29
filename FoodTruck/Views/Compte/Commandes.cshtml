@@ -1,0 +1,8 @@
+﻿@{
+    ViewBag.Title = "Vos commandes";
+}
+
+    <div class="compte">
+        <h2>Votre Compte</h2>
+        @Html.Action("Liste", "Commande", new { id = "toutes" })
+    </div>

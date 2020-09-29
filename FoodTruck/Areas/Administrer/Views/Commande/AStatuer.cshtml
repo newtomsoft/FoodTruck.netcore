@@ -1,0 +1,17 @@
+﻿@using FoodTruck.ViewModels
+@{
+    ViewBag.Title = "Commandes à statuer";
+}
+@model List<CommandeViewModel>
+
+@if (Model != null)
+{
+    <div class="adminCommandes">
+        <h2>Administration</h2>
+        @{
+            ViewBag.ModeAdmin = true;
+            TempData["MessageCommandes"] = "Gérer le statut des commandes passées";
+        }
+        @Html.Partial("~/Views/Commande/Liste.cshtml", Model)
+    </div>
+}

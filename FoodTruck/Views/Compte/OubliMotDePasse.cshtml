@@ -1,0 +1,22 @@
+﻿@using FoodTruck.Models
+@using FoodTruck.ViewModels
+@model Client
+@{
+    ViewBag.Title = "FoodTruckLyon - Récupération de votre compte";
+}
+<div class="compte">
+    <h2>Réinitialisez votre mot de passe</h2>
+    @using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "ccform connexion creationCompte" }))
+    {
+        <input name="action" type="hidden" value="changementMotDePasse">
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="mdp" type="password" placeholder="Nouveau mot de passe" maxlength='20' required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="mdp2" type="password" placeholder="Confirmer le mot de passe" maxlength='20' required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Valider">
+        </div>
+    }
+</div>

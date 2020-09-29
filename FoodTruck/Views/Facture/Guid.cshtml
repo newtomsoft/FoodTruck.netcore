@@ -1,0 +1,89 @@
+﻿@using FoodTruck.ViewModels
+@using System.Globalization
+@using System.Configuration
+@model FactureViewModel
+@{
+    Layout = null;
+    ViewBag.Title = "Facture";
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    string dossierImagesSysteme = ConfigurationManager.AppSettings["PathImagesSysteme"];
+    double Tva = Model.CommandeViewModel.Commande.PrixTotalTTC - Model.CommandeViewModel.Commande.PrixTotalHT;
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Votre Facture</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+
+    @if (Model != null && Model.CommandeViewModel.Commande != null)
+    {
+        <div id="facture">
+            <img src="@dossierImagesSysteme/logo.png" alt="Logo FoodTruckLyon" class="d-inline-block align-top logo-full">
+            <div class="adresse">
+                <p>17 Rue des Gones</p>
+                <p>69007 Lyon</p>
+                <p>06.13.75.20.47</p>
+            </div>
+
+            <h3>Facture n° @ViewBag.FactureId</h3>
+            <h4>Commande n° @Model.CommandeViewModel.Commande.Id</h4>
+            <h5>Repas du @Model.CommandeViewModel.Commande.DateRetrait.ToString("dddd dd MMMM yyyy à HH:mm").Replace(":", "h")</h5>
+            <h5>Client : @Model.CommandeViewModel.Client.Prenom @Model.CommandeViewModel.Client.Nom</h5>
+            <hr />
+            <table>
+                <tr>
+                    <th class="image"> </th>
+                    <th class="quantite"> </th>
+                    <th class="nom">Article</th>
+                    <th class="description">Description</th>
+                    <th class="prixUnitaire">Prix unit. (HT)</th>
+                    <th class="prixTotal">Prix total (TTC)</th>
+                </tr>
+
+                @foreach (var a in Model.CommandeViewModel.ListArticlesVM)
+                {
+                    <tr>
+                        <td><img src="@dossierImagesArticles/@a.Article.Image" alt="@a.Article.Nom" /></td>
+                        <td>@a.Quantite</td>
+                        <td>@a.Article.Nom</td>
+                        <td>@a.Article.Description</td>
+                        <td class="prixUnitaire">@a.Article.PrixHT.ToString("C2", new CultureInfo("fr-FR"))</td>
+                        <td class="prixTotal">@a.PrixTotalTTC.ToString("C2", new CultureInfo("fr-FR"))</td>
+                    </tr>
+                }
+                @if (Model.CommandeViewModel.Commande.RemiseFidelite != 0)
+                {
+                    <tr>
+                        <td class="libelle" colspan="5">Remise fidélité</td>
+                        <td class="prixTotal">- @Model.CommandeViewModel.Commande.RemiseFidelite.ToString("C2", new CultureInfo("fr-FR"))</td>
+                    </tr>
+                }
+                @if (Model.CommandeViewModel.Commande.RemiseCommerciale != 0)
+                {
+                    <tr>
+                        <td class="libelle" colspan="5">Remise commerciale</td>
+                        <td class="prixTotal">- @Model.CommandeViewModel.Commande.RemiseCommerciale.ToString("C2", new CultureInfo("fr-FR"))</td>
+                    </tr>
+                }
+                <tr>
+                    <td class="libelle" colspan="5">Prix total</td>
+                    <td class="prixTotalFacture">@Model.CommandeViewModel.Commande.PrixTotalTTC.ToString("C2", new CultureInfo("fr-FR"))</td>
+                </tr>
+                <tr>
+                    <td class="libelle" colspan="5">dont TVA</td>
+                    <td class="prixTotal">@Tva.ToString("C2", new CultureInfo("fr-FR"))</td>
+                </tr>
+
+            </table>
+            <hr />
+        </div>
+    }
+</body>
+</html>

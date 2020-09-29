@@ -1,0 +1,156 @@
+﻿@using FoodTruck.Models
+@using System.Globalization
+@using FoodTruck.ViewModels
+@using System.Configuration
+@model PanierViewModel
+@{
+    ViewBag.Title = "FoodTruckLyon - Panier";
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    int pasCreneauxHoraire = int.Parse(ConfigurationManager.AppSettings["PasCreneauxHoraire"]);
+    Client client = ViewBag.Client;
+    double remiseCommercialeMontant = 0;
+    string afficheRemiseCommerciale = "";
+    string codePromo = "";
+    if (TempData["CodePromo"] != null)
+    {
+        codePromo = TempData["CodePromo"] as string;
+        remiseCommercialeMontant = (double)TempData["RemiseCommercialeMontant"];
+        if (remiseCommercialeMontant != 0)
+        { afficheRemiseCommerciale = "- " + remiseCommercialeMontant.ToString("C2", new CultureInfo("fr-FR")); }
+    }
+    double prixRemiseCommercialeDeduite = Model.PrixTotalTTC - remiseCommercialeMontant;
+}
+
+<script>
+    function MiseAJourPrixTotal(prix, remise) {
+        var nouveauPrix = prix.replace(",", ".") - remise;
+        if (nouveauPrix < 0)
+            nouveauPrix = 0;
+        nouveauPrix = nouveauPrix.toFixed(2);
+        document.getElementById("prixTotalApresRemise").innerHTML = "Total à régler : " + nouveauPrix.replace(".", ",") + " €";
+    }
+
+    function MajMontantRemise(remise) {
+        MiseAJourPrixTotal(document.getElementById("prixRemiseCommercialeDeduite").value, remise);
+        if (remise != 0) {
+            document.getElementById("montantRemiseFidelite").innerHTML = "- " + Number(remise).toFixed(2).replace(".", ",") + " €";
+        }
+        else {
+            document.getElementById("montantRemiseFidelite").innerHTML = "";
+        }
+    }
+
+    function MajCodePromo() {
+        document.getElementById("codePromo").value = document.getElementById("codePromoClient").value;
+    }
+</script>
+
+<div class="panier">
+    <h3>Votre panier :</h3>
+    <dl class="dl-horizontal"></dl>
+
+    <div id="panierValide">
+        <div class="listePanier">
+            @{int i = 0;}
+            @foreach (var articleDetailViewModel in Model.ArticlesDetailsViewModel)
+            {
+                <div>
+                    <a href="/Article/@articleDetailViewModel.NomPourUrl">
+                        <img src="@dossierImagesArticles/@articleDetailViewModel.Article.Image" alt="@articleDetailViewModel.Article.Nom" />
+                    </a>
+                    @articleDetailViewModel.Quantite<span>x </span><a href="/Article/@articleDetailViewModel.NomPourUrl">@articleDetailViewModel.Article.Nom</a>
+                </div>
+                using (Html.BeginForm("Retirer", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "plus_moins" }))
+                {
+                    <input hidden name="id" value="@i">
+                    <button class="ajoutSupprPanierTexte" type="submit">retirer</button>
+                }
+                using (Html.BeginForm("Ajouter", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "plus_moins" }))
+                {
+                    <input hidden name="nom" value="@articleDetailViewModel.Article.Nom">
+                    <button class="ajoutSupprPanierTexte" type="submit">ajouter</button>
+                }
+                <p class="sousTotal">@articleDetailViewModel.PrixTotalTTC.ToString("C2", new CultureInfo("fr-FR"))</p>
+                <hr />
+                i++;
+            }
+        </div>
+        <hr />
+    </div>
+    @if (Model.ArticlesDetailsViewModel.Count == 0)
+    {
+        <h4>Votre panier est vide. Venez <a href="/Article">découvrir notre carte.</a></h4>
+    }
+    else
+    {
+        <div id="panierValide2">
+            <div id="prixTotalAvantRemise" class="sousTotal">Total : @Model.PrixTotalTTC.ToString("C2", new CultureInfo("fr-FR"))</div>
+            <div class="listePanier">
+                @using (Html.BeginForm("Index", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+                {
+                    <input id="codePromoClient" class="ccformfield" type="text" placeholder="bon d'achat ou code promo" maxlength='20' name="codePromo" value="@codePromo" size="1">
+                    <div class="verifierAfficherValiditeRemise">
+                        <button class="verifierCodeRemise" type="submit">Vérifier</button>
+                        <input hidden id="hiddenRemiseCommerciale" value="@remiseCommercialeMontant">
+                    </div>
+                }
+                <p id="montantRemiseCommerciale" class="sousTotal">@afficheRemiseCommerciale</p>
+            </div>
+        </div>
+        using (Html.BeginForm("Index", "Commande", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post))
+        {
+            <div id="panierValide2">
+                <input hidden id="codePromo" name="codePromo">
+                <div class="listePanier">
+                    @if (client.Cagnotte >= 10 && Model.PrixTotalTTC >= 10)
+                    {
+                        <select id="remiseFidelite" class="ccformfield" name="remiseFidelite" size="1" onchange="MajMontantRemise(this.value, montantRemiseFidelite.id)">
+                            <option selected value="0">cagnotte fidélité</option>
+                            @for (int iRemise = 10; iRemise <= (client.Cagnotte <= Model.PrixTotalTTC ? client.Cagnotte : Model.PrixTotalTTC); iRemise++)
+                            {
+                                <option value="@iRemise">cagnotte fidélité de @iRemise €</option>
+                            }
+                        </select>
+                    }
+                    <p id="montantRemiseFidelite" class="sousTotal"></p>
+                    <input hidden id="prixRemiseCommercialeDeduite" value="@prixRemiseCommercialeDeduite">
+                </div>
+            </div>
+            if (client.Cagnotte >= 10 && Model.PrixTotalTTC < 10)
+            {
+                string reste = (10 - @Model.PrixTotalTTC).ToString("C2", new CultureInfo("fr-FR"));
+                <div class=" messageInfo">Ajoutez pour @reste d'articles pour pouvoir utiliser votre cagnotte fidélité</div>
+            }
+            <div id="panierValide">
+                <div>
+                    <h3 id="prixTotalApresRemise" class="total">Total à régler : @prixRemiseCommercialeDeduite.ToString("C2", new CultureInfo("fr-FR"))</h3>
+                </div>
+                <div>
+                    <select id="choixHoraire" class="ccformfield" name="dateRetrait" size="1" required>
+                        <option selected disabled>créneau horaire de retrait</option>
+                        @{ DateTime dateAvant = DateTime.MinValue; }
+                        @foreach (Creneau creneau in Model.Creneaux)
+                        {
+                            if (creneau.DateRetrait > dateAvant.AddMinutes(pasCreneauxHoraire))
+                            {
+                                <optgroup label="@creneau.DateRetrait.ToString("dddd dd MMMM")"></optgroup>
+                            }
+                            dateAvant = creneau.DateRetrait;
+                            if (@creneau.CommandesPossiblesRestantes > 0)
+                            {
+                                <option value="@creneau.DateRetrait">@creneau.DateRetrait.ToString("HH:mm").Replace(":", "h")</option>
+                            }
+                            else
+                            {
+                                <option disabled value="@creneau.DateRetrait">@creneau.DateRetrait.ToString("HH:mm").Replace(":", "h") (complet)</option>
+                            }
+                        }
+                    </select>
+                </div>
+                <h3 class="total">
+                    <button class="validerPanier" type="submit" onclick="MajCodePromo()">Commander</button>
+                </h3>
+            </div>
+        }
+    }
+</div>

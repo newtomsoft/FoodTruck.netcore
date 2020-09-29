@@ -1,0 +1,19 @@
+﻿@using FoodTruck.ViewModels
+@using System.Configuration
+@{
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    ViewBag.Title = "Les commandes futures";
+}
+@model List<CommandeViewModel>
+
+@if (Model != null)
+{
+    <div class="adminCommandes">
+        <h2>Administration</h2>
+        @{
+            ViewBag.ModeAdmin = true;
+            TempData["MessageCommandes"] = "Liste des commandes futures";
+        }
+        @Html.Partial("~/Views/Commande/Liste.cshtml", Model)
+    </div>
+}

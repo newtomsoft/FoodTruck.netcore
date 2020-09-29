@@ -1,0 +1,69 @@
+﻿@using FoodTruck.DAL
+@using System.Configuration
+@{
+    ViewBag.Title = "FoodTruckLyon - Ajouter article au catalogue";
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    string dossierImagesSysteme = ConfigurationManager.AppSettings["PathImagesSysteme"];
+}
+
+<div class="admin">
+    <h2>Ajouter un article</h2>
+    <dl class="dl-horizontal"></dl>
+    <div>
+        @using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="nom" type="text" title="Nom" placeholder="Nom" maxlength='30' required>
+            </div>
+            <div class="ccfield-prepend">
+                <div class="ccformfield">
+                    <figure>
+                        <label for="selectionFichier">
+                            <img id="ImagePreview" src="@dossierImagesSysteme/AjouterUneImage.png" alt="Ajouter une image" />
+                            <figcaption>Cliquez pour changer l'image</figcaption>
+                        </label>
+                    </figure>
+                </div>
+            </div>
+            <div class="image-upload">
+                <input id="selectionFichier" class="ccformfield" onchange="readURL(this);" name="file" type="file" accept="image/*" maxlength='100' required>
+            </div>
+            <div class="ccfield-prepend">
+                <textarea class="ccformfield" name="description" rows="1" title="Description" placeholder="Description" maxlength='90' required></textarea>
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="prix" type="number" min="0.05" step="0.05" title="Prix" placeholder="Prix" maxlength='8' required>
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="grammage" type="number" min="0" step="10" title="Grammage" placeholder="Grammage" maxlength='8'>
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="litrage" type="number" min="0" step="10" title="Litrage" placeholder="Litrage" maxlength='8'>
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="allergenes" type="text" title="Allergènes" placeholder="Allergènes" maxlength='60'>
+            </div>
+            <div class="ccfield-prepend">
+                <select class="ccformfield" name="familleId" size="1" required>
+                    <option selected disabled>Type d'article</option>
+                    @foreach (var famille in new ArticleDAL().FamillesArticle())
+                    {
+                        <option value="@famille.Id">@famille.Nom</option>
+                    }
+                </select>
+            </div>
+            <div class="ccfield-prepend">
+                <div class="ccformfield">
+                    <div>
+                        <input name="dansCarte" type="checkbox" value="true" checked>
+                        <input name="dansCarte" type="hidden" value="false">
+                        Visible dans la carte
+                    </div>
+                </div>
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccbtn" type="submit" value="Ajouter">
+            </div>
+        }
+    </div>
+</div>

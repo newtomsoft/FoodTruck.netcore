@@ -1,0 +1,52 @@
+﻿@{
+    ViewBag.Title = "FoodTruckLyon - Création de votre compte";
+    string classFormEmail = "class=ccformfield";
+    string classFormLogin = "class=ccformfield";
+    string classFormMdp = "class=ccformfield";
+    if (ViewBag.ErreurEmail != null && ViewBag.ErreurEmail) { classFormEmail = "class=ccformfieldErreur"; }
+    if (ViewBag.ErreurLogin != null && ViewBag.ErreurLogin) { classFormLogin = "class=ccformfieldErreur"; }
+    if (ViewBag.ErreurMdp != null && ViewBag.ErreurMdp) { classFormMdp = "class=ccformfieldErreur"; }
+}
+<div class="compte">
+    <h2>Création de votre compte</h2>
+    <dl class="dl-horizontal"></dl>
+    <h4>Créez un compte pour profiter de l'ensemble des services de votre foodtruck.</h4>
+
+    @using (Html.BeginForm("Creation", "Compte", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "ccform connexion creationCompte" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="ccfield-prepend">
+            <input @classFormLogin name="login" type="text" placeholder="Nom d'utilisateur" maxlength='50' required value="@if(ViewBag.Login != null) {@ViewBag.Login}">
+        </div>
+        <div class="ccfield-prepend">
+            <input @classFormMdp name="mdp" type="password" placeholder="Mot de passe" maxlength='20' required value="@if(ViewBag.Mdp != null) {@ViewBag.Mdp}">
+        </div>
+        <div class="ccfield-prepend">
+            <input @classFormMdp name="mdp2" type="password" placeholder="Confirmer le mot de passe" maxlength='20' required value="@if(ViewBag.Mdp2 != null) {@ViewBag.Mdp2}">
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="nom" type="text" placeholder="Nom" maxlength='30' required value="@if(ViewBag.Nom != null) {@ViewBag.Nom}">
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="prenom" type="text" placeholder="Prénom" maxlength='30' required value="@if(ViewBag.Prenom != null) {@ViewBag.Prenom}">
+        </div>
+        <div class="ccfield-prepend">
+            <input @classFormEmail name="email" type="email" placeholder="Email" maxlength='50' required value="@if(ViewBag.Email != null) {@ViewBag.Email}">
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="telephone" type="tel" placeholder="Téléphone" maxlength='10' required value="@if(ViewBag.Telephone != null) {@ViewBag.Telephone}">
+        </div>
+        <div class="ccfield-prepend">
+            <div class="ccformfield">
+                <div>
+                    <input name="connexionAuto" type="checkbox" value="true" checked>
+                    <input name="connexionAuto" type="hidden" value="false">
+                    Connexion automatique
+                </div>
+            </div>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Creation">
+        </div>
+    }
+</div>

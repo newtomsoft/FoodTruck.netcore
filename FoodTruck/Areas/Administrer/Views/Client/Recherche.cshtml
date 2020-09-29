@@ -1,0 +1,36 @@
+﻿@using FoodTruck.Models
+@{
+    ViewBag.Title = "Recherche de clients";
+}
+@model List<Client>
+
+<div class="adminCommandes">
+    <h2>Administration</h2>
+    <h3>Recherche de clients</h3>
+    @using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        <input name="id" type="hidden" value="0">
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="recherche" type="text" title="Rentrer votre recherche (nom, prénom, mail, téléphone)" placeholder="Rentrer votre recherche (nom, prénom, mail, téléphone)" maxlength='30' value="@if(ViewBag.Recherche != null) {@ViewBag.Recherche}">
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Rechercher">
+        </div>
+    }
+    <hr />
+</div>
+@if (Model != null)
+{
+    foreach (Client c in Model)
+    {
+        <div id="panierEnLigne">
+            <div class="gestionCommandeArticle">
+                <div>Client @c.Id : @c.Prenom @c.Nom</div>
+                <div>Inscription : @c.Inscription.ToString("dd/MM/yyyy")</div>
+                <div> Mail : @c.Email - Téléphone : @c.Telephone</div>
+                <div>Cagnotte : @c.Cagnotte</div>
+                <hr />
+            </div>
+        </div>
+    }
+}

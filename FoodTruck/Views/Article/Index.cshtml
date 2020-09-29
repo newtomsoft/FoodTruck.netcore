@@ -1,0 +1,66 @@
+﻿@using FoodTruck.Models
+@using System.Globalization
+@using FoodTruck.DAL
+@using FoodTruck.ViewModels
+@using System.Configuration
+@{string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"]; }
+@model List<ArticleViewModel>
+@{
+    ViewBag.Title = "FoodTruckLyon - Notre carte";
+    List<FamilleArticle> familles = new ArticleDAL().FamillesArticle();
+    int familleId = familles[0].Id;
+    int indexId = familles.FindIndex(f => f.Id == familleId);
+    int i = 0;
+}
+<div class="principalQuandPanierLateralPresent">
+    @while (i < Model.Count)
+    {
+        <hr />
+        <div><h2 class="familleNotreCarte">@familles[indexId].Nom</h2></div>
+        List<ArticleViewModel> articles = new List<ArticleViewModel>();
+        while (i < Model.Count && Model[i].Article.FamilleId == familleId)
+        {
+            articles.Add(Model[i]);
+            i++;
+        }
+        if (i != Model.Count)
+        {
+            familleId = Model[i].Article.FamilleId;
+            indexId = familles.FindIndex(f => f.Id == familleId);
+        }
+        <section class="notreCarte">
+            @foreach (ArticleViewModel a in articles)
+            {
+                string effet = "";
+                bool dansCarte = true;
+                if (!a.Article.DansCarte)
+                {
+                    effet = "class=pasDansCarte";
+                    dansCarte = false;
+                }
+                <div id="@a.NomPourUrl" class="indexArticle">
+                    <a @effet href="/Article/@a.NomPourUrl">
+                        <img src="@dossierImagesArticles/@a.Article.Image" alt="@a.Article.Nom" />
+                    </a>
+                    <div class="articleDescription">
+                        <a href="/Article/@a.NomPourUrl">
+                            <p>@a.Article.Nom</p>
+                            <p>@a.Article.PrixTTC.ToString("C2", new CultureInfo("fr-FR"))</p>
+                        </a>
+                    </div>
+                    <div id="ajoutPanier">
+                        @if (dansCarte)
+                        {
+                            using (Html.BeginForm("Ajouter", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "prix_submit" }))
+                            {
+                                <input name="nom" value="@a.Article.Nom" hidden>
+                                <input type="hidden" name="ancre" value="#@a.NomPourUrl">
+                                <button class="ajoutPanier" type="submit">Ajouter au panier</button>
+                            }
+                        }
+                    </div>
+                </div>
+            }
+        </section>
+    }
+</div>

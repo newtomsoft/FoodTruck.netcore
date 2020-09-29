@@ -1,0 +1,150 @@
+﻿@using FoodTruck.Models
+@using FoodTruck.ViewModels
+@using System.Configuration
+@{
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    string dossierImagesSysteme = ConfigurationManager.AppSettings["PathImagesSysteme"];
+    Message message = TempData["message"] as Message;
+    Client client = ViewBag.Client;
+    PanierViewModel panier = ViewBag.Panier;
+
+    int nombreArticlesDansPanier = 0;
+    if (panier != null)
+    {
+        foreach (ArticleViewModel article in panier.ArticlesDetailsViewModel)
+        {
+            nombreArticlesDansPanier += article.Quantite;
+        }
+    }
+}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+</head>
+<body>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/vast-engineering/jquery-popup-overlay@2/jquery.popupoverlay.min.js"></script>
+    <script src="/Scripts/foodTruck.js"></script>
+
+    <div id="page">
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/">
+                    <img src="@dossierImagesSysteme/logo.png" alt="Logo FoodTruckLyon" class="d-inline-block align-top logo-full">
+                    <img src="@dossierImagesSysteme/logo-only.png" alt="Logo FoodTruckLyon" class="d-inline-block align-top logo-only">
+                </a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <ul class="nav navbar-nav">
+
+                    <li>@Html.ActionLink("Accueil", "Index", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("A propos", "APropos", "Home", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("Notre carte", "Index", "Article", new { area = "" }, null)</li>
+                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, null)</li>
+                    @if (ViewBag.MenuAdmin != null)
+                    {
+                        <li>@Html.ActionLink("Administration", "Index", "Index", new { area = "Administrer" }, null)</li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Votre compte", "Index", "Compte", new { area = "" }, null)</li>
+                    }
+                    <li>@Html.ActionLink($"Panier ({nombreArticlesDansPanier})", "Index", "Panier", new { area = "" }, null)</li>
+                </ul>
+            </div>
+        </div>
+        <div class="bandeauClient">
+            <div></div>
+            <div></div>
+            @if (client.Id != 0)
+            {
+                <div><a href="/Compte/Profil">Bienvenue @client.Prenom @client.Nom</a> - <a href="/Compte/Deconnexion/">Déconnexion</a></div>
+            }
+            else
+            {
+                <div><a href="/Compte/Connexion/">Connexion</a> - <a href="/Compte/Creation/">Création de compte</a></div>
+            }
+        </div>
+
+        @if (panier != null && panier.PrixTotalTTC != 0 && ViewBag.PanierLatteralDesactive == null)
+        {
+            <div id="lateral">
+                <div id="lateralEnTete"></div>
+                <div id="panier">
+                    <h4>Panier</h4>
+                    <div class="listePanier">
+                        @{int i = 0;
+                        }
+                        @foreach (var article in panier.ArticlesDetailsViewModel)
+                        {
+                            double prixTotalArticle = article.Article.PrixTTC * article.Quantite;
+                            <div>
+                                @article.Quantite
+                                <span>x </span><a href="/Article/@article.NomPourUrl">
+                                    @article.Article.Nom
+                                </a>
+                            </div>
+                            using (Html.BeginForm("Retirer", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "plus_moins" }))
+                            {
+                                <input name="id" value="@i" hidden>
+                                <button class="ajoutSupprPanierTexte" type="submit">retirer</button>
+                            }
+                            using (Html.BeginForm("Ajouter", "Panier", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "plus_moins" }))
+                            {
+                                <input name="nom" value="@article.Article.Nom" hidden>
+                                <button class="ajoutSupprPanierTexte" type="submit">ajouter</button>
+                            }
+                            <p class="sousTotalLateral">@prixTotalArticle.ToString("F2") &nbsp;&euro;</p>
+                            <hr />
+                            i++;
+                        }
+                    </div>
+                    <hr />
+                    <div class="total">Total : @panier.PrixTotalTTC.ToString("F2") &nbsp;&euro;</div>
+                    <a class="validerPanier" href="/Panier">Valider votre panier</a>
+                </div>
+            </div>
+        }
+
+        @RenderBody()
+
+        <hr />
+        <footer>
+            <p>&copy; @DateTime.Now.Year - <a href="mailto:info@foodtrucklyon.fr">FoodTruckLyon.fr</a></p>
+        </footer>
+    </div>
+</body>
+</html>
+
+@if (message != null)
+{
+    <script>
+        $(document).ready(function () {
+            $('#messagePopup').popup({
+                autoopen: true,
+                closebutton: true,
+                transition: 'all 0.4s'
+            });
+            $.fn.popup.defaults.pagecontainer = '#page'
+        });
+    </script>
+
+    <div id="messagePopup">
+        <img src="@message.CheminImage" alt="@message.Type.ToString()" />
+        @Html.Raw(message.ToHtml())
+    </div>
+}

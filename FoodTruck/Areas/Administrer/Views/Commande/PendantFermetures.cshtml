@@ -1,0 +1,37 @@
+﻿@using FoodTruck.ViewModels
+@using System.Configuration
+@{
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    ViewBag.Title = "Commandes pendant fermetures";
+}
+@model List<CommandeViewModel>
+
+@if (Model != null)
+{
+    <div class="adminCommandes">
+        <h2>Administration</h2>
+        @{
+            ViewBag.ModeAdmin = true;
+            TempData["MessageCommandes"] = "Liste des commandes dont la date de retrait est pendant une fermeture";
+        }
+        @if (Model.Count > 0)
+        {
+            using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input name="id" type="hidden" value="0">
+                <div class="ccfield-prepend">
+                    <input class="ccbtn" type="submit" value="Annuler ces commandes et alerter les clients">
+                </div>
+            }
+            @Html.Partial("~/Views/Commande/Liste.cshtml", Model)
+            <br />
+            using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+            {
+                <input name="id" type="hidden" value="0">
+                <div class="ccfield-prepend">
+                    <input class="ccbtn" type="submit" value="Annuler ces commandes et alerter les clients">
+                </div>
+            }
+        }
+    </div>
+}

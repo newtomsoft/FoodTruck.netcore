@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Administration";
+}
+    <div class="admin">
+        <h2>Administration</h2>
+
+        <h3>Commandes</h3>
+        <h4>@Html.ActionLink("Gérer les commandes en cours", "EnCours", "Commande", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Voir les commandes futures", "Futures", "Commande", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Gérer le statut des commandes passées", "AStatuer", "Commande", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Voir les commandes pendant les fermetures", "PendantFermetures", "Commande", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Recherche de commandes", "Recherche", "Commande", new { area = "Administrer" }, null)</h4>
+
+        <h3>Articles</h3>
+        <h4>@Html.ActionLink("Ajouter un article à la carte", "Ajouter", "Article", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Modifier un article de la carte", "Modifier", "Article", new { area = "Administrer" }, null)</h4>
+
+        <h3>Planning des ouvertures/fermetures</h3>
+        <h4>@Html.ActionLink("Gérer les ouvertures hebdomadaires", "OuverturesHebdomadaires", "Planning", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Gérer les ouvertures exceptionnelles", "OuverturesExceptionnelles", "Planning", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Gérer les fermetures exceptionnelles", "FermeturesExceptionnelles", "Planning", new { area = "Administrer" }, null)</h4>
+
+        <h3>Maintenance</h3>
+        <h4>@Html.ActionLink("Purger les données", "Purger", "Donnee", new { area = "Administrer" }, null)</h4>
+
+        <h3>Clients</h3>
+        <h4>@Html.ActionLink("Recherche de clients", "Recherche", "Client", new { area = "Administrer" }, null)</h4>
+        <h4>@Html.ActionLink("Donner les droits d'administration", "DonnerDroitsAdmin", "Client", new { area = "Administrer" }, null)</h4>
+    </div>

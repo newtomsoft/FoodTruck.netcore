@@ -1,0 +1,46 @@
+﻿@{
+    ViewBag.Title = "FoodTruckLyon - Connexion";
+}
+
+<div class="compte">
+    <h2>Connexion</h2>
+    <dl class="dl-horizontal"></dl>
+    <p>Connectez-vous à votre compte pour profiter de tous les services de votre foodtruck.</p>
+    <p>Si vous n'avez pas de compte, pour pouvez en créer un en <a href="/Compte/Creation">suivant ce lien</a>.</p>
+    <dl class="dl-horizontal"></dl>
+
+    <h4>Saisissez vos identifiants :</h4>
+    @using (Html.BeginForm("Connexion", "Compte", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "ccform connexion" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="loginEmail" type="text" placeholder="Nom d'utilisateur ou Email" required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="mdp" type="password" placeholder="Mot de passe" required>
+        </div>
+        <div class="ccfield-prepend">
+            <div class="ccformfield">
+                <div>
+                    <input name="connexionAuto" type="checkbox" value="true" checked>
+                    <input name="connexionAuto" type="hidden" value="false">
+                    Connexion automatique
+                </div>
+            </div>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Connexion">
+        </div>
+    }
+    <h4>Mot de passe oublié ?</h4>
+    @using (Html.BeginForm("OubliMotDePasse", "Compte", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "ccform connexion" }))
+    {
+        <input name="action" type="hidden" value="generationMail">
+        <div class="ccfield-prepend">
+            <input class="ccformfield" name="email" type="email" placeholder="Email" required>
+        </div>
+        <div class="ccfield-prepend">
+            <input class="ccbtn" type="submit" value="Mot de passe oublié">
+        </div>
+    }
+</div>

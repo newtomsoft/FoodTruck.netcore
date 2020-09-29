@@ -1,0 +1,39 @@
+﻿@using FoodTruck.ViewModels
+@using System.Configuration
+@{
+    string dossierImagesArticles = ConfigurationManager.AppSettings["PathImagesArticles"];
+    ViewBag.Title = "Recherche de commandes";
+}
+@model List<CommandeViewModel>
+
+@if (Model != null)
+{
+    <div class="adminCommandes">
+        <h2>Administration</h2>
+        <h3>Recherche de commandes</h3>
+        @using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { enctype = "multipart/form-data" }))
+        {
+            <input name="id" type="hidden" value="0">
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="recherche" type="text" title="Rentrer votre recherche (numéro de commande, nom, prénom, mail)" placeholder="Rentrer votre recherche (numéro de commande, nom, prénom, mail)" maxlength='30' value="@if(ViewBag.Recherche != null) {@ViewBag.Recherche}">
+            </div>
+            <div>
+                <div class="libelleDate">date minimum</div>
+                <input class="ccformfield" id="dateDebut" title="début de période de recherche" name="dateDebut" type="date" min="@DateTime.Today.AddYears(-2).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" onblur="MiseAJourDateFin(this.value, dateFin.id)" value="@if(ViewBag.DateDebut != null) {@ViewBag.DateDebut.ToString("yyyy-MM-dd")}">
+            </div>
+            <div>
+                <div class="libelleDate">date maximum</div>
+                <input class="ccformfield" id="dateFin" title="fin de période de recherche" name="dateFin" type="date" min="@DateTime.Today.AddYears(-2).ToString("yyyy-MM-dd")" max="@DateTime.Today.AddMonths(1).ToString("yyyy-MM-dd")" onblur="MiseAJourDateDebut(this.value, dateDebut.id)" value="@if(ViewBag.DateFin != null) {@ViewBag.DateFin.ToString("yyyy-MM-dd")}">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccbtn" type="submit" value="Rechercher">
+            </div>
+        }
+        <hr />
+        @{
+            ViewBag.ModeAdmin = true;
+            TempData["MessageCommandes"] = "Résultat de votre recherche";
+        }
+        @Html.Partial("~/Views/Commande/Liste.cshtml", Model)
+    </div>
+}

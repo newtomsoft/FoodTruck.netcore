@@ -1,0 +1,78 @@
+﻿@using FoodTruck.Models
+@using System.Globalization
+@{
+    ViewBag.Title = "FoodTruckLyon - Votre profil";
+}
+@model Client
+<div class="compte">
+    <h2>Votre compte</h2>
+    <div>
+        <dl class="dl-horizontal">
+        </dl>
+    </div>
+    @if (Model.Id == 0)
+    {
+        <div class="messageErreur">Vous n'êtes pas connecté à votre compte. Merci de vous connecter pour gérer vos informations</div>
+    }
+    else
+    {
+        string login, email, nom, prenom, telephone;
+        string mdp = "";
+        string ancienMdp = "";
+        if (ViewBag.Login != null && ViewBag.Login != "") { login = ViewBag.Login; } else { login = Model.Login.Trim(); }
+        if (ViewBag.Email != null && ViewBag.Email != "") { email = ViewBag.Email; } else { email = Model.Email.Trim(); }
+        if (ViewBag.Nom != null && ViewBag.Nom != "") { nom = ViewBag.Nom; } else { nom = Model.Nom.Trim(); }
+        if (ViewBag.Prenom != null && ViewBag.Prenom != "") { prenom = ViewBag.Prenom; } else { prenom = Model.Prenom.Trim(); }
+        if (ViewBag.Telephone != null && ViewBag.Telephone != "") { telephone = ViewBag.Telephone; } else { telephone = Model.Telephone.Trim(); }
+        if (ViewBag.AncienMdp != null && ViewBag.AncienMdp != "") { ancienMdp = ViewBag.AncienMdp; }
+        if (ViewBag.Mdp != null && ViewBag.Mdp != "") { mdp = ViewBag.Mdp; }
+        string prenomNom = prenom + " " + nom + ".";
+
+        <div>Vous avez @Model.Cagnotte € sur votre cagnotte fidélité</div>
+        <div>Depuis votre inscription du @Model.Inscription.ToString("dd MMMM yyyy"), vous avez eu @ViewBag.RemiseTotalClient.ToString("C2", new CultureInfo("fr-FR")) de remises sur vos commandes </div>
+
+        @Html.Action("Liste", "Commande", new { id = "enCours" })
+
+        @Html.Action("Liste", "Commande", new { id = "dernieres" })
+
+        <h3>@Html.ActionLink("Voir toutes vos commandes", "Commandes", "Compte")</h3>
+        <hr />
+        <h3>Modifier vos coordonnées</h3>
+        using (Html.BeginForm((string)ViewContext.RouteData.Values["action"], (string)ViewContext.RouteData.Values["controller"], new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { @class = "ccform connexion creationCompte" }))
+        {
+            if (ViewBag.Email != null) { email = ViewBag.Email; }
+            if (ViewBag.Nom != null) { nom = ViewBag.Nom; }
+            if (ViewBag.Prenom != null) { prenom = ViewBag.Prenom; }
+            if (ViewBag.Telephone != null) { telephone = ViewBag.Telephone; }
+
+            <input name="ancienEmail" type="hidden" value="@Model.Email">
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="login" type="text" title="Nom d'utilisateur" placeholder="Nom d'utilisateur" maxlength='50' required value="@login">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="email" type="email" title="Email" placeholder="Email" maxlength='50' required value="@email">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="ancienMdp" type="password" title="Ancien mot de passe" placeholder="Ancien mot de passe" maxlength='20' required value="@ancienMdp">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="nom" type="text" title="Nom" placeholder="Nom" maxlength='30' required value="@nom">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="prenom" type="text" title="Prénom" placeholder="Prénom" maxlength='30' required value="@prenom">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="telephone" type="tel" title="Téléphone" placeholder="Téléphone" maxlength='10' required value="@telephone">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="mdp" type="password" title="Nouveau mot de passe" placeholder="Nouveau mot de passe (si souhaité)" maxlength='20' value="@mdp">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccformfield" name="mdp2" type="password" title="Nouveau mot de passe" placeholder="Confirmer le mot de passe" maxlength='20' value="@mdp">
+            </div>
+            <div class="ccfield-prepend">
+                <input class="ccbtn" type="submit" value="Modifier">
+            </div>
+        }
+    }
+</div>

@@ -1,0 +1,80 @@
+﻿@using System.Configuration
+@{
+    ViewBag.Title = "FoodTruckLyon - projet de fin de formation";
+    string dossierImagesSysteme = ConfigurationManager.AppSettings["PathImagesSysteme"];
+    string dossierImagesBlog = ConfigurationManager.AppSettings["PathImagesBlog"];
+}
+
+<article id="aPropos">
+    <h2>FoodTruckLyon.fr : 1 an déjà !</h2>
+    <dl class="dl-horizontal"></dl>
+    <img src="@dossierImagesBlog/asp-net-mvc.jpg" alt="asp.net MVC" height="400" width="600" />
+
+    <h4>Mise à jour du 20 octobre 2019</h4>
+    <p>
+        Retrouvez toutes les annonces sur le développement de cette application sur la <a href="https://www.linkedin.com/company/29289425" target="_blank">page linkedIn dédiée</a>
+    </p>
+    <p>
+        <figure>
+            <a href="https://www.linkedin.com/company/29289425" target="_blank">
+                <img src="@dossierImagesBlog/page linkedIn FoodTruckLyon.png" alt="capture page LinkedIn" width="600" />
+            </a>
+            <figcaption>Cliquez pour accéder au linkedIn</figcaption>
+        </figure>
+    </p>
+    <h4>Mise à jour du 5 octobre 2019</h4>
+    <p>
+        Nous venons de passer les reqêtes classiques SQL en Linq to Entities. Nous utilisons donc maintenant un ORM : <a href="https://docs.microsoft.com/fr-fr/ef/" target="_blank">Entity Framework</a>
+    </p>
+    <p>
+        Nous y gagnons en lisibilité du code et la maintenance future sera plus simple. La dette technique en prend un bon coup ! ;-)
+    </p>
+
+    <p>
+        <figure>
+            <a href="@dossierImagesBlog/avant-après.png" target="_blank">
+                <img src="@dossierImagesBlog/avant-après.png" alt="de sql à linq to entities" height="400" width="600" />
+            </a>
+            <figcaption>Cliquez pour zoomer</figcaption>
+        </figure>
+    </p>
+
+    <h4>Historique</h4>
+    <p>
+        Si vous êtes sur ce site, en ayant cherché un foodtruck sur Lyon, c'est que le référencement naturel sur les moteurs de recherche est très bon !
+        En effet, aucune communication n'a été faite à propos de foodtrucklyon.fr si ce n'est sur LinkedIn.
+    </p>
+    <p>
+        FoodtruckLyon.fr est le résultat du projet de fin de formation C# de <a href="https://www.linkedin.com/in/thomas-vuille" target="_blank">Thomas</a> et <a href="https://www.linkedin.com/in/olivierrochard" target="_blank">Olivier</a> en septembre 2018.
+    </p>
+    <p>
+        Brièvement c’est :
+    </p>
+    <ul class="apropos">
+        <li>Un site 100% dynamique</li>
+        <li>Un développement en une semaine</li>
+        <li>En mode Agile/Scrum avec des sprints très très courts !</li>
+        <li>Du Code <a href="https://dotnet.microsoft.com/apps/aspnet/mvc" target="_blank">C# Asp.net MVC</a></li>
+        <li>Une base de donnée SQL Server avec seulement 7 tables</li>
+        <li>Thomas à 64,3 % sur le back-end et 35,7 % sur le front-end (et vice versa pour Olivier)</li>
+        <li>Une gestion des sources sous Git (<a href="https://github.com/newtom69/FoodTruckLyon" target="_blank">github</a> pour le dépôt)</li>
+        <li>Un peu de <a href="https://fr.wikipedia.org/wiki/Dette_technique" target="_blank">dette technique</a>, mais pas trop. Il fallait aller vite !</li>
+        <li>Une livraison sous <a href="https://azure.microsoft.com/fr-fr/" target="_blank">Azure</a> pour sa rapidité et sa facilité d'accès</li>
+        <li>Un <a href="http://referentiel.institut-agile.fr/backlog.html" target="_blank">backlog</a> bien vidé !</li>
+    </ul>
+    <p>
+        Juste après la livraison Thomas a décidé de s’occuper de quelques tâches restantes dans le backlog 
+    </p>
+    <ul class="apropos">
+        <li>Une sauvegarde du panier en cas de commande inachevée</li>
+        <li>Un hébergeur <a href="https://www.ikoula.com/fr/hebergement-web" target="_blank">Ikoula</a> qui propose une offre d'entrée de gamme Windows ASP.net et SQL Server plus économique qu’Azure</li>
+        <li>Un nom de domaine en .fr et .com (non pas de .biz ni de .space !)</li>
+        <li>Un code source toujours visible sur <a href="https://github.com/newtom69/FoodTruckLyon" target="_blank">Github</a></li>
+    </ul>
+    <p>
+        Coté dette technique, les requêtes SQL en dur pourraient très bien être remplacées par du <a href="https://docs.microsoft.com/fr-fr/dotnet/framework/data/adonet/ef/language-reference/linq-to-entities" target="_blank">Linq to Entities</a> afin d’améliorer la lisibilité et la maintenance du code. Nous n’avons pas mis en place de tests unitaires automatisés non plus. Ce sera fait lorsque nous aurons notre première commande d’un gérant de foodtruck (ou même de restaurant) ;-)
+    </p>
+    <p>
+        En cas de questions, n’hésitez-pas à nous contacter. <a href="~/Home/Contact">Il y a une page pour ça</a>.
+    </p>
+</article>
